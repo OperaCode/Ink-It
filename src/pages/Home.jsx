@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import CryptoJS from "crypto-js";
-import { Plus } from "lucide-react";
 import AddNoteSection from "../components/AddNotes";
 import ActivityLogSidebar from "../components/ActivityLog";
 import NotesDisplay from "../components/NoteDisplay";
@@ -14,22 +13,59 @@ const Home = () => {
   const [logView, setLogView] = useState("Activity");
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false); // 🔥 added
 
-  // Load notes and activity log from localStorage
+  // ✅ Add missing form states
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [folder, setFolder] = useState("");
+  const [tags, setTags] = useState("");
+  const [isLocked, setIsLocked] = useState(false);
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState("");
+
+  // load from localStorage
   useEffect(() => {
-    const savedNotes = JSON.parse(localStorage.getItem("notes"));
-    const savedLog = JSON.parse(localStorage.getItem("activityLog"));
-    if (savedNotes) setNotes(savedNotes);
-    if (savedLog) setActivityLog(savedLog);
+    const savedNotes = JSON.parse(localStorage.getItem("notes")) || [];
+    const savedLog = JSON.parse(localStorage.getItem("activityLog")) || [];
+    setNotes(savedNotes);
+    setActivityLog(savedLog);
+    setIsLoaded(true); // ✅ mark loaded AFTER setting data
   }, []);
 
-  // Save notes and activity log to localStorage
+  // save to localStorage ONLY AFTER loading
   useEffect(() => {
-    localStorage.setItem("notes", JSON.stringify(notes));
-    localStorage.setItem("activityLog", JSON.stringify(activityLog));
-  }, [notes, activityLog]);
+    if (isLoaded) {
+      localStorage.setItem("notes", JSON.stringify(notes));
+      localStorage.setItem("activityLog", JSON.stringify(activityLog));
+    }
+  }, [notes, activityLog, isLoaded]);
+  
 
-  const addNote = (newNote) => {
+  const addNote = (e) => {
+    e.preventDefault();
+    if (!title || !content) {
+      setError("Title and content are required");
+      return;
+    }
+
+    let noteContent = content;
+    if (isLocked && pin) {
+      noteContent = CryptoJS.AES.encrypt(content, pin).toString();
+    }
+
+    const newNote = {
+      id: Date.now(),
+      title,
+      content: noteContent,
+      folder: folder || "General",
+      tags: tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+      isLocked,
+    };
+
     setNotes((prev) => [newNote, ...prev]);
     setActivityLog((prev) => [
       {
@@ -39,6 +75,15 @@ const Home = () => {
       },
       ...prev.slice(0, 9),
     ]);
+
+    // Reset form
+    setTitle("");
+    setContent("");
+    setFolder("");
+    setTags("");
+    setIsLocked(false);
+    setPin("");
+    setError("");
   };
 
   const deleteNote = (id) => {
@@ -97,7 +142,23 @@ const Home = () => {
 
       <main className="max-w-7xl mx-auto pt-20 sm:pt-24 flex flex-col md:flex-row gap-6">
         {/* Add Note */}
-        <AddNoteSection addNote={addNote} />
+        <AddNoteSection
+          addNote={addNote}
+          title={title}
+          setTitle={setTitle}
+          content={content}
+          setContent={setContent}
+          folder={folder}
+          setFolder={setFolder}
+          tags={tags}
+          setTags={setTags}
+          isLocked={isLocked}
+          setIsLocked={setIsLocked}
+          pin={pin}
+          setPin={setPin}
+          setError={setError}
+          error={error}
+        />
 
         {/* Activity Log */}
         <ActivityLogSidebar
