@@ -1,12 +1,40 @@
-# React + Vite
+🖋️ InkPulse
+InkPulse is a modern note-taking app built with React. It lets you capture, organise, and lock your notes with ease, featuring a beautiful UI, folders, tags, and optional PIN-based note encryption.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+🚀 Features
+✅ Animated landing page with scroll navigation
+✅ Add, view, and delete notes
+✅ Lock notes with a PIN using AES encryption (CryptoJS)
+✅ Organise notes by folders and tags
+✅ Persistent storage with localStorage
+✅ Activity log sidebar for recent actions
+✅ Responsive and clean design with Tailwind CSS + Framer Motion animations
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🛠️ Technologies Used
+React (functional components)
+Tailwind CSS (styling)
+Framer Motion (animations)
+CryptoJS (AES encryption for locked notes)
+React Router (navigation)
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+💻 Getting Started
+Prerequisites
+Node.js 
+npm or yarn
+
+Installation
+Clone the repository:
+git clone https://github.com/OperaCode/InkPulse.git
+cd inkpulse
+
+
+Install dependencies:
+npm install
+# or
+yarn
+
+
+Run the app locally:
+npm run dev
