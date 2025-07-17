@@ -7,6 +7,7 @@ import NotesDisplay from "../components/NoteDisplay";
 import NoteDetailsModal from "../components/NoteDetails";
 
 const Home = () => {
+  // states
   const [notes, setNotes] = useState([]);
   const [activityLog, setActivityLog] = useState([]);
   const [filterFolder, setFilterFolder] = useState("All");
@@ -31,7 +32,7 @@ const Home = () => {
     setIsLoaded(true); 
   }, []);
 
-  // save to localStorage ONLY AFTER loading
+  // Save to localStorage ONLY AFTER loading existing data
   useEffect(() => {
     if (isLoaded) {
       localStorage.setItem("notes", JSON.stringify(notes));
@@ -39,7 +40,7 @@ const Home = () => {
     }
   }, [notes, activityLog, isLoaded]);
   
-
+// to add note
   const addNote = (e) => {
     e.preventDefault();
     if (!title || !content) {
@@ -47,7 +48,10 @@ const Home = () => {
       return;
     }
 
+
     let noteContent = content;
+
+    // If note is locked and a PIN is provided, encrypt the note content
     if (isLocked && pin) {
       noteContent = CryptoJS.AES.encrypt(content, pin).toString();
     }
@@ -64,6 +68,7 @@ const Home = () => {
       isLocked,
     };
 
+    // Update notes state by adding the new note
     setNotes((prev) => [newNote, ...prev]);
     setActivityLog((prev) => [
       {
@@ -84,9 +89,14 @@ const Home = () => {
     setError("");
   };
 
+  // Function to delete a note
   const deleteNote = (id) => {
+
+    // Find the note to be deleted for logging
     const note = notes.find((n) => n.id === id);
     setNotes(notes.filter((n) => n.id !== id));
+
+    // Log the deletion action and keeping only the latest 10 logs
     setActivityLog((prev) => [
       {
         id: Date.now(),
@@ -97,10 +107,12 @@ const Home = () => {
     ]);
   };
 
+  // to view notes
   const viewNoteContent = (note) => {
     setSelectedNote(note);
     setDetailsModalOpen(true);
   };
+
 
   const closeModal = () => {
     setSelectedNote(null);
@@ -108,6 +120,8 @@ const Home = () => {
   };
 
   const uniqueFolders = ["All", ...new Set(notes.map((note) => note.folder))];
+
+  // Calculate the number of notes in each folder, including "All"
   const folderCounts = uniqueFolders.reduce((acc, f) => {
     acc[f] =
       f === "All"
@@ -116,6 +130,7 @@ const Home = () => {
     return acc;
   }, {});
 
+  // Filter notes based on the currently selected folder
   const filteredNotes =
     filterFolder === "All"
       ? notes
