@@ -13,9 +13,7 @@ const Home = () => {
   const [logView, setLogView] = useState("Activity");
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false); // 🔥 added
-
-  // ✅ Add missing form states
+  const [isLoaded, setIsLoaded] = useState(false); 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [folder, setFolder] = useState("");
@@ -30,7 +28,7 @@ const Home = () => {
     const savedLog = JSON.parse(localStorage.getItem("activityLog")) || [];
     setNotes(savedNotes);
     setActivityLog(savedLog);
-    setIsLoaded(true); // ✅ mark loaded AFTER setting data
+    setIsLoaded(true); 
   }, []);
 
   // save to localStorage ONLY AFTER loading
